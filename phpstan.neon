@@ -1,0 +1,3 @@
+parameters:
+  ignoreErrors:
+    - '#Instantiated class jojoe77777\\\\FormAPI\\\\SimpleForm not found#'
