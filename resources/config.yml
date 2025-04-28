@@ -1,0 +1,11 @@
+---
+quests:
+  quest_680f6d65d74b3:
+    name: Mine 10 coal Ore
+    description: For 10 cooked beef
+    type: BREAK_BLOCK
+    block: COAL_ORE
+    target: 10
+    reward: give {player} cooked_beef 10
+    rewardMessage: You have recieved 10 Cooked Beef For Completing Your Quest!
+    cooldown: 300

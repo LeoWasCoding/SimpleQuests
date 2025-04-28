@@ -1,0 +1,36 @@
+name: simpleQuests
+version: 1.0.0
+main: simpleQuests\Main
+api: 5.0.0
+
+commands:
+  quest:
+    description: "Open the Quest Menu"
+    usage: "/quest"
+    permission: simplequests.command.quest
+  addquest:
+    description: "Add a new quest"
+    usage: "/addquest"
+    permission: simplequests.command.addquest
+  editquest:
+    description: "Edit an existing quest"
+    usage: "/editquest"
+    permission: simplequests.command.editquest
+  deletequest:
+    description: "Delete a quest"
+    usage: "/deletequest"
+    permission: simplequests.command.deletequest
+
+permissions:
+  simplequests.command.quest:
+    description: "Allows using the /quest command"
+    default: true
+  simplequests.command.addquest:
+    description: "Allows using the /addquest command"
+    default: op
+  simplequests.command.editquest:
+    description: "Allows using the /editquest command"
+    default: op
+  simplequests.command.deletequest:
+    description: "Allows using the /deletequest command"
+    default: op
