@@ -274,7 +274,7 @@ class Main extends PluginBase implements Listener {
         $player->sendForm($form);
     }
 
-    // --- START: Edit Quest Functionality ---
+    // --- START: Edit Quest Functionality, (this took a long time T-T) ---
     private function sendEditQuestMenu(Player $player): void {
         $validQuests = [];
         $form = new SimpleForm(function(Player $player, ?int $data) use (&$validQuests) {
@@ -332,7 +332,7 @@ class Main extends PluginBase implements Listener {
         $form->addDropdown("Action", ["Save", "Cancel"], 0);
         $player->sendForm($form);
     }
-    // --- END: Edit Quest Functionality ---
+    // --- END: Edit Quest Functionality (took alot of tries but finally :D) ---
 
     public function onBlockBreak(BlockBreakEvent $event): void {
         $player = $event->getPlayer();
@@ -439,7 +439,7 @@ class Main extends PluginBase implements Listener {
     }
 
     /**
-     * Parse duration strings like "1s", "5m", "2h" into seconds.
+     * Parse duration strings like "1s", "5m", "2h" into seconds, way easier to read :V
      */
     private function parseDuration(string $input): int {
         if (preg_match('/^(\d+)\s*([smh])$/i', trim($input), $m)) {
