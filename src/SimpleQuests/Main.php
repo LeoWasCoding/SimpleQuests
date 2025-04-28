@@ -141,20 +141,13 @@ class Main extends PluginBase implements Listener {
     }
 
     private function sendDeleteQuestMenu(Player $player): void {
-    $validQuests = [];
-    if (class_exists(\jojoe77777\FormAPI\SimpleForm::class)) {
-        $form = new \jojoe77777\FormAPI\SimpleForm(function(Player $player, ?int $data) use (&$validQuests) {
-            if ($data === null) return;
-            
-            // Make sure the array is defined before accessing the key
-            $array = []; // Define $array before accessing it. Replace with your actual array if needed.
-            $key = 0; // Ensure $key is valid before using it
-            $value = $array[$key] ?? null; // Handle undefined array index correctly
-            
-            // Assuming $qid is the quest ID you want to delete, ensure it's properly set
-            $qid = $validQuests[$data] ?? null; // Make sure $qid is assigned a valid value
-            if ($qid !== null) {
-                $this->deleteQuest($player, $qid);
+        $validQuests = [];
+        if (class_exists(\jojoe77777\FormAPI\SimpleForm::class)) {
+            $form = new \jojoe77777\FormAPI\SimpleForm(function(Player $player, ?int $data) use (&$validQuests) {
+                if ($data === null) return;
+                $value = $array[$key] ?? null;
+                if ($qid !== null) {
+                    $this->deleteQuest($player, $qid);
                 }
             });
             $form->setTitle("Select Quest to Delete");
