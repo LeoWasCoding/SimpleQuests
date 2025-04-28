@@ -213,131 +213,151 @@ class Main extends PluginBase implements Listener {
 
     private function sendQuestMenu(Player $player): void {
         $validQuests = [];
-        $form = new SimpleForm(function(Player $player, ?int $data) use (&$validQuests) {
-            if ($data === null || !isset($validQuests[$data])) return;
-            $this->startQuest($player, $validQuests[$data]);
-        });
-        $form->setTitle(TF::GOLD . "Available Quests");
-        foreach ($this->quests as $id => $quest) {
-            if ($this->isValidQuest($quest)) {
-                $validQuests[] = $id;
-                $form->addButton("§a{$quest['name']}\n§7{$quest['description']}");
+        if (class_exists(\jojoe77777\FormAPI\SimpleForm::class)) {
+            $form = new \jojoe77777\FormAPI\SimpleForm(function(Player $player, ?int $data) use (&$validQuests) {
+                if ($data === null || !isset($validQuests[$data])) return;
+                $this->startQuest($player, $validQuests[$data]);
+            });
+            $form->setTitle(TF::GOLD . "Available Quests");
+            foreach ($this->quests as $id => $quest) {
+                if ($this->isValidQuest($quest)) {
+                    $validQuests[] = $id;
+                    $form->addButton("§a{$quest['name']}\n§7{$quest['description']}");
+                }
             }
+            if (empty($validQuests)) {
+                $form->addButton(TF::RED . "No quests available");
+            }
+            $player->sendForm($form);
+        } else {
+            $player->sendMessage("§cFormAPI is not installed!");
         }
-        if (empty($validQuests)) {
-            $form->addButton(TF::RED . "No quests available");
-        }
-        $player->sendForm($form);
-    }
+    }    
 
     private function sendQuestTypeMenu(Player $player): void {
-        $form = new SimpleForm(function(Player $player, ?int $data) {
-            if ($data === null) return;
-            $types = ["BREAK_BLOCK", "PLACE_BLOCK"];
-            $type = $types[$data] ?? null;
-            if ($type !== null) {
-                $this->sendAddQuestForm($player, $type);
-            }
-        });
-        $form->setTitle("Select Quest Type");
-        $form->addButton("Break Block");
-        $player->sendForm($form);
-    }
+        if (class_exists(\jojoe77777\FormAPI\SimpleForm::class)) {
+            $form = new \jojoe77777\FormAPI\SimpleForm(function(Player $player, ?int $data) {
+                if ($data === null) return;
+                $types = ["BREAK_BLOCK", "PLACE_BLOCK"];
+                $type = $types[$data] ?? null;
+                if ($type !== null) {
+                    $this->sendAddQuestForm($player, $type);
+                }
+            });
+            $form->setTitle("Select Quest Type");
+            $form->addButton("Break Block");
+            $player->sendForm($form);
+        } else {
+            $player->sendMessage("§cFormAPI is not installed!");
+        }
+    }    
 
     private function sendAddQuestForm(Player $player, string $type): void {
-        $form = new CustomForm(function(Player $player, ?array $data) use ($type) {
-            if ($data === null) return;
-            [$name, $desc, $block, $target, $rewardItem, $rewardMessage, $cooldownInput] = $data;
-
-            if (!is_numeric($target)) {
-                $player->sendMessage(TF::RED . "Target must be a number.");
-                return;
-            }
-
-            $id = uniqid("quest_");
-            $this->quests[$id] = [
-                "name" => $name,
-                "description" => $desc,
-                "type" => $type,
-                "block" => strtoupper(trim($block)),
-                "target" => (int)$target,
-                "reward" => trim($rewardItem),
-                "rewardMessage" => trim($rewardMessage),
-                "cooldown" => $this->parseDuration($cooldownInput)
-            ];
-            $this->getConfig()->set("quests", $this->quests);
-            $this->getConfig()->save();
-            $player->sendMessage(TF::GREEN . "Quest '$name' added! Type: $type");
-        });
-        $form->setTitle("Add " . ($type === "BREAK_BLOCK" ? "Break" : "Place") . " Quest");
-        $form->addInput("Name", "e.g. Mine stone blocks");
-        $form->addInput("Description", "e.g. Break stone for reward");
-        $form->addInput("Block (id/name)", $type === "BREAK_BLOCK" ? "STONE" : "DIRT");
-        $form->addInput("Target Amount", "10");
-        $form->addInput("Reward Command (use {player} for player name)", "say Congratulations {player}!");
-        $form->addInput("Reward Message", "e.g. You have completed the quest!");
-        $form->addInput("Cooldown (e.g. 1s, 5m, 2h)", "e.g. 0");
-        $player->sendForm($form);
-    }
+        if (class_exists(\jojoe77777\FormAPI\CustomForm::class)) {
+            $form = new \jojoe77777\FormAPI\CustomForm(function(Player $player, ?array $data) use ($type) {
+                if ($data === null) return;
+                [$name, $desc, $block, $target, $rewardItem, $rewardMessage, $cooldownInput] = $data;
+    
+                if (!is_numeric($target)) {
+                    $player->sendMessage(TF::RED . "Target must be a number.");
+                    return;
+                }
+    
+                $id = uniqid("quest_");
+                $this->quests[$id] = [
+                    "name" => $name,
+                    "description" => $desc,
+                    "type" => $type,
+                    "block" => strtoupper(trim($block)),
+                    "target" => (int)$target,
+                    "reward" => trim($rewardItem),
+                    "rewardMessage" => trim($rewardMessage),
+                    "cooldown" => $this->parseDuration($cooldownInput)
+                ];
+                $this->getConfig()->set("quests", $this->quests);
+                $this->getConfig()->save();
+                $player->sendMessage(TF::GREEN . "Quest '$name' added! Type: $type");
+            });
+            $form->setTitle("Add " . ($type === "BREAK_BLOCK" ? "Break" : "Place") . " Quest");
+            $form->addInput("Name", "e.g. Mine stone blocks");
+            $form->addInput("Description", "e.g. Break stone for reward");
+            $form->addInput("Block (id/name)", $type === "BREAK_BLOCK" ? "STONE" : "DIRT");
+            $form->addInput("Target Amount", "10");
+            $form->addInput("Reward Command (use {player} for player name)", "say Congratulations {player}!");
+            $form->addInput("Reward Message", "e.g. You have completed the quest!");
+            $form->addInput("Cooldown (e.g. 1s, 5m, 2h)", "e.g. 0");
+            $player->sendForm($form);
+        } else {
+            $player->sendMessage("§cFormAPI is not installed!");
+        }
+    }    
 
     // --- START: Edit Quest Functionality, (this took a long time T-T) ---
     private function sendEditQuestMenu(Player $player): void {
         $validQuests = [];
-        $form = new SimpleForm(function(Player $player, ?int $data) use (&$validQuests) {
-            if ($data === null || !isset($validQuests[$data])) return;
-            $this->sendEditQuestForm($player, $validQuests[$data]);
-        });
-        $form->setTitle(TF::GOLD . "Edit Quests");
-        foreach ($this->quests as $id => $quest) {
-            if ($this->isValidQuest($quest)) {
-                $validQuests[] = $id;
-                $form->addButton("§e{$quest['name']}\n§7{$quest['description']}");
+        if (class_exists(\jojoe77777\FormAPI\SimpleForm::class)) {
+            $form = new \jojoe77777\FormAPI\SimpleForm(function(Player $player, ?int $data) use (&$validQuests) {
+                if ($data === null || !isset($validQuests[$data])) return;
+                $this->sendEditQuestForm($player, $validQuests[$data]);
+            });
+            $form->setTitle(TF::GOLD . "Edit Quests");
+            foreach ($this->quests as $id => $quest) {
+                if ($this->isValidQuest($quest)) {
+                    $validQuests[] = $id;
+                    $form->addButton("§e{$quest['name']}\n§7{$quest['description']}");
+                }
             }
+            if (empty($validQuests)) {
+                $form->addButton(TF::RED . "No quests available to edit");
+            }
+            $player->sendForm($form);
+        } else {
+            $player->sendMessage("§cFormAPI is not installed!");
         }
-        if (empty($validQuests)) {
-            $form->addButton(TF::RED . "No quests available to edit");
-        }
-        $player->sendForm($form);
-    }
+    }    
 
     private function sendEditQuestForm(Player $player, string $qid): void {
-        $quest = $this->quests[$qid];
-        $form = new CustomForm(function(Player $player, ?array $data) use ($qid) {
-            if ($data === null) return;
-            [$name, $desc, $block, $target, $rewardItem, $rewardMessage, $cooldownInput, $action] = $data;
-            if ($action === 1) {
-                $player->sendMessage(TF::YELLOW . "Quest edit canceled.");
-                return;
-            }
-            if (!is_numeric($target)) {
-                $player->sendMessage(TF::RED . "Target must be a number.");
-                return;
-            }
-            $this->quests[$qid] = [
-                'name' => $name,
-                'description' => $desc,
-                'type' => $this->quests[$qid]['type'],
-                'block' => strtoupper(trim($block)),
-                'target' => (int)$target,
-                'reward' => trim($rewardItem),
-                'rewardMessage' => trim($rewardMessage),
-                'cooldown' => $this->parseDuration($cooldownInput)
-            ];
-            $this->getConfig()->set('quests', $this->quests);
-            $this->getConfig()->save();
-            $player->sendMessage(TF::GREEN . "Quest '$name' updated successfully.");
-        });
-        $form->setTitle("Edit Quest: {$quest['name']}");
-        $form->addInput("Name", "", $quest['name']);
-        $form->addInput("Description", "", $quest['description']);
-        $form->addInput("Block (id/name)", "", $quest['block']);
-        $form->addInput("Target Amount", "", (string)$quest['target']);
-        $form->addInput("Reward Command", "", $quest['reward']);
-        $form->addInput("Reward Message", "", $quest['rewardMessage']);
-        $form->addInput("Cooldown (e.g. 1s, 5m, 2h)", "", (string)$quest['cooldown']);
-        $form->addDropdown("Action", ["Save", "Cancel"], 0);
-        $player->sendForm($form);
-    }
+        if (class_exists(\jojoe77777\FormAPI\CustomForm::class)) {
+            $quest = $this->quests[$qid];
+            $form = new \jojoe77777\FormAPI\CustomForm(function(Player $player, ?array $data) use ($qid) {
+                if ($data === null) return;
+                [$name, $desc, $block, $target, $rewardItem, $rewardMessage, $cooldownInput, $action] = $data;
+                if ($action === 1) {
+                    $player->sendMessage(TF::YELLOW . "Quest edit canceled.");
+                    return;
+                }
+                if (!is_numeric($target)) {
+                    $player->sendMessage(TF::RED . "Target must be a number.");
+                    return;
+                }
+                $this->quests[$qid] = [
+                    'name' => $name,
+                    'description' => $desc,
+                    'type' => $this->quests[$qid]['type'],
+                    'block' => strtoupper(trim($block)),
+                    'target' => (int)$target,
+                    'reward' => trim($rewardItem),
+                    'rewardMessage' => trim($rewardMessage),
+                    'cooldown' => $this->parseDuration($cooldownInput)
+                ];
+                $this->getConfig()->set('quests', $this->quests);
+                $this->getConfig()->save();
+                $player->sendMessage(TF::GREEN . "Quest '$name' updated successfully.");
+            });
+            $form->setTitle("Edit Quest: {$quest['name']}");
+            $form->addInput("Name", "", $quest['name']);
+            $form->addInput("Description", "", $quest['description']);
+            $form->addInput("Block (id/name)", "", $quest['block']);
+            $form->addInput("Target Amount", "", (string)$quest['target']);
+            $form->addInput("Reward Command", "", $quest['reward']);
+            $form->addInput("Reward Message", "", $quest['rewardMessage']);
+            $form->addInput("Cooldown (e.g. 1s, 5m, 2h)", "", (string)$quest['cooldown']);
+            $form->addDropdown("Action", ["Save", "Cancel"], 0);
+            $player->sendForm($form);
+        } else {
+            $player->sendMessage("§cFormAPI is not installed!");
+        }
+    }    
     // --- END: Edit Quest Functionality (took alot of tries but finally :D) ---
 
     public function onBlockBreak(BlockBreakEvent $event): void {
