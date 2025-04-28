@@ -134,25 +134,29 @@ class Main extends PluginBase implements Listener {
 
     private function sendDeleteQuestMenu(Player $player): void {
         $validQuests = [];
-        $form = new SimpleForm(function(Player $player, ?int $data) use (&$validQuests) {
-            if ($data === null) return;
-            $qid = $validQuests[$data] ?? null;
-            if ($qid !== null) {
-                $this->deleteQuest($player, $qid);
+        if (class_exists(\jojoe77777\FormAPI\SimpleForm::class)) {
+            $form = new \jojoe77777\FormAPI\SimpleForm(function(Player $player, ?int $data) use (&$validQuests) {
+                if ($data === null) return;
+                $qid = $validQuests[$data] ?? null;
+                if ($qid !== null) {
+                    $this->deleteQuest($player, $qid);
+                }
+            });
+            $form->setTitle("Select Quest to Delete");
+            foreach ($this->quests as $id => $quest) {
+                if ($this->isValidQuest($quest)) {
+                    $validQuests[] = $id;
+                    $form->addButton("§a{$quest['name']}\n§7{$quest['description']}");
+                }
             }
-        });
-        $form->setTitle("Select Quest to Delete");
-        foreach ($this->quests as $id => $quest) {
-            if ($this->isValidQuest($quest)) {
-                $validQuests[] = $id;
-                $form->addButton("§a{$quest['name']}\n§7{$quest['description']}");
+            if (empty($validQuests)) {
+                $form->addButton(TF::RED . "No quests available to delete");
             }
+            $player->sendForm($form);
+        } else {
+            $player->sendMessage("§cFormAPI is not installed!");
         }
-        if (empty($validQuests)) {
-            $form->addButton(TF::RED . "No quests available to delete");
-        }
-        $player->sendForm($form);
-    }
+    }    
 
     private function deleteQuest(Player $player, string $questId): void {
         if (!isset($this->quests[$questId])) {
