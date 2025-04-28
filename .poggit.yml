@@ -4,5 +4,4 @@ branches:
 projects:
   SimpleQuests:
     path: ""
-    dependencies:
-      - src: jojoe77777/FormAPI
+    type: plugin
