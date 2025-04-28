@@ -144,8 +144,8 @@ class Main extends PluginBase implements Listener {
         $validQuests = [];
         if (class_exists(\jojoe77777\FormAPI\SimpleForm::class)) {
             $form = new \jojoe77777\FormAPI\SimpleForm(function(Player $player, ?int $data) use (&$validQuests) {
-                if ($data === null || !isset($validQuests[$data])) return;  // Fix here, check if index exists
-                $qid = $validQuests[$data];
+                if ($data === null) return;
+                $qid = $validQuests[$data] ?? null;
                 if ($qid !== null) {
                     $this->deleteQuest($player, $qid);
                 }
@@ -164,7 +164,7 @@ class Main extends PluginBase implements Listener {
         } else {
             $player->sendMessage("§cFormAPI is not installed!");
         }
-    }
+    }    
 
     private function deleteQuest(Player $player, string $questId): void {
         if (!isset($this->quests[$questId])) {
