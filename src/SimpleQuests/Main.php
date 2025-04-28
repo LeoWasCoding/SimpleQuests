@@ -55,8 +55,12 @@ class Main extends PluginBase implements Listener {
             // Ensure cooldown exists or set to 0 if not
             $q['cooldown'] = isset($q['cooldown']) ? $q['cooldown'] : 0;
             
-            // Store the quest
-            $this->quests[$id] = $q;
+            // Store the quest, making sure $q is always an array
+            if (is_array($q)) {
+                $this->quests[$id] = $q;
+            } else {
+                $this->getLogger()->warning("Quest '$id' is not a valid array!");
+            }
         }
     
 
