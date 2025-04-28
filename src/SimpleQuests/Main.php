@@ -46,42 +46,44 @@ class Main extends PluginBase implements Listener {
     private ConsoleCommandSender $consoleSender;
 
     public function onEnable(): void {
-        // Create the plugin's data folder if it doesn't exist
         @mkdir($this->getDataFolder(), 0777, true);
         $this->saveDefaultConfig();
     
         // Load quests with default cooldown = 0
         $raw = $this->getConfig()->get("quests", []);
         foreach ($raw as $id => $q) {
-            $q['cooldown'] = $q['cooldown'] ?? 0; // Default cooldown to 0 if not set
+            // Ensure cooldown exists or set to 0 if not
+            $q['cooldown'] = isset($q['cooldown']) ? $q['cooldown'] : 0;
+            
+            // Store the quest
             $this->quests[$id] = $q;
         }
     
+
         // Load player progress
         $file = $this->getDataFolder() . "progress.json";
         if (file_exists($file)) {
             $this->playerQuestProgress = json_decode(file_get_contents($file), true) ?? [];
         }
-    
         // Load last completed timestamps
         $lcFile = $this->getDataFolder() . "lastCompleted.json";
         if (file_exists($lcFile)) {
             $this->lastCompleted = json_decode(file_get_contents($lcFile), true) ?? [];
         }
-    
+
         // Prepare console sender (PMMP 5+)
         $this->consoleSender = new ConsoleCommandSender(
             $this->getServer(),
             $this->getServer()->getLanguage()
         );
-    
+
         // Register events and commands
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
         $this->registerCommand("quest", "Open the Quest Menu", "simplequests.command.quest");
         $this->registerCommand("addquest", "Add a new quest", "simplequests.command.addquest");
         $this->registerCommand("editquest", "Edit an existing quest", "simplequests.command.editquest");
         $this->registerCommand("deletequest", "Delete a quest via menu", "simplequests.command.deletequest");
-    
+
         // Save progress every second (20 ticks = 1 second)
         $this->getScheduler()->scheduleRepeatingTask(new ClosureTask(function (): void {
             file_put_contents(
@@ -89,7 +91,6 @@ class Main extends PluginBase implements Listener {
                 json_encode($this->playerQuestProgress, JSON_PRETTY_PRINT)
             );
         }), 20);
-    
         // Save lastCompleted every minute (1200 ticks)
         $this->getScheduler()->scheduleRepeatingTask(new ClosureTask(function (): void {
             file_put_contents(
@@ -97,25 +98,23 @@ class Main extends PluginBase implements Listener {
                 json_encode($this->lastCompleted, JSON_PRETTY_PRINT)
             );
         }), 1200);
-    
+
         // Show progress bar every second for active quests
         $this->getScheduler()->scheduleRepeatingTask(new ClosureTask(function (): void {
             foreach ($this->playerQuestProgress as $playerName => $data) {
                 $player = $this->getServer()->getPlayerExact($playerName);
                 if (!$player instanceof Player || !$player->isOnline()) continue;
-    
+
                 $qid     = $data['quest'];
                 $current = $data['progress'];
-    
-                // Check if the quest exists before using it
-                $quest = isset($this->quests[$qid]) ? $this->quests[$qid] : null;
-                if (!$quest) continue;
-    
+                $quest   = $this->quests[$qid] ?? null;
+                if ($quest === null) continue;
+
                 $target  = $quest['target'];
                 $percent = min((int)($current * 100 / max($target, 1)), 100);
                 $filled  = intdiv($percent, 5);
                 $bar     = str_repeat("§a▎", $filled) . str_repeat("§7▎", 20 - $filled);
-    
+
                 // Send as tip above hotbar
                 $player->sendTip(
                     TF::YELLOW . "{$quest['name']}: $bar §r $current/$target ($percent%)"
@@ -123,7 +122,6 @@ class Main extends PluginBase implements Listener {
             }
         }), 20);
     }
-    
 
     public function onDisable(): void {
         // Save progress on disable
