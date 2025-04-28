@@ -1,6 +1,6 @@
 name: simpleQuests
 version: 1.0.0
-main: simpleQuests\Main
+main: SimpleQuests\Main
 api: 5.0.0
 
 commands:
