@@ -145,7 +145,7 @@ class Main extends PluginBase implements Listener {
         if (class_exists(\jojoe77777\FormAPI\SimpleForm::class)) {
             $form = new \jojoe77777\FormAPI\SimpleForm(function(Player $player, ?int $data) use (&$validQuests) {
                 if ($data === null) return;
-                $qid = $validQuests[$data] ?? null;
+                $value = isset($array[$key]) ? $array[$key] : null;
                 if ($qid !== null) {
                     $this->deleteQuest($player, $qid);
                 }
