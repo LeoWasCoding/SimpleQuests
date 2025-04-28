@@ -1,6 +1,6 @@
 parameters:
     paths:
-        - src
+        - ../src
     ignoreErrors:
         - '#Offset int on array\{\} on left side of \?\? does not exist#'
         - '#Strict comparison using !== between null and null will always evaluate to false#'
