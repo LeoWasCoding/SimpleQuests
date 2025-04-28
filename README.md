@@ -62,7 +62,7 @@ When creating a quest:
 ---
 
 # Download
-Coming soon!
+[Click Here](https://poggit.pmmp.io/r/255464/SimpleQuests_dev-37.phar)
 
 # Support
 Having issues or suggestions? Feel free to open an issue or pull request!
