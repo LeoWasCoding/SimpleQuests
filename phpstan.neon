@@ -3,9 +3,6 @@ parameters:
   paths:
     - src/SimpleQuests
 
-  autoload_files:
-    - %rootDir%/../../autoload.php
-
   ignoreErrors:
     - '#Instantiated class jojoe77777\\\\FormAPI\\\\SimpleForm not found#'
     - '#Instantiated class jojoe77777\\\\FormAPI\\\\CustomForm not found#'
