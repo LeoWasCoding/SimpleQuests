@@ -1,8 +1,8 @@
---- # Poggit-CI Manifest. Open the CI at https://poggit.pmmp.io/ci/LeoWasCoding/SimpleQuests
 build-by-default: true
 branches:
-- main
+  - main
 projects:
   SimpleQuests:
     path: ""
-...
+    dependencies:
+      - src: jojoe77777/FormAPI
