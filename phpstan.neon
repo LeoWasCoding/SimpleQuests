@@ -11,4 +11,4 @@ parameters:
         - '#Else branch is unreachable because ternary operator condition is always true#'
         - '#Method SimpleQuests\\Main::startQuest\(\) is unused#'
 
-    level: 1
+    level: 0
