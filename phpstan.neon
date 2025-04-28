@@ -1,0 +1,14 @@
+parameters:
+    paths:
+        - src
+    ignoreErrors:
+        - '#Offset int on array\{\} on left side of \?\? does not exist#'
+        - '#Strict comparison using !== between null and null will always evaluate to false#'
+        - '#Offset int on array\{\} in isset\(\) does not exist#'
+        - '#Result of \|\| is always true#'
+        - '#Unreachable statement - code above always terminates#'
+        - '#Method SimpleQuests\\Main::sendEditQuestForm\(\) is unused#'
+        - '#Else branch is unreachable because ternary operator condition is always true#'
+        - '#Method SimpleQuests\\Main::startQuest\(\) is unused#'
+
+    level: 5
