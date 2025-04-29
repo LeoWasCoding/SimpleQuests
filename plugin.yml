@@ -2,8 +2,6 @@ name: simpleQuests
 version: 1.0.0
 main: SimpleQuests\Main
 api: 5.0.0
-depend:
-  - FormAPI
 
 commands:
   quest:
